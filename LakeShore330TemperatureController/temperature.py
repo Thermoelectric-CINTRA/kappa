@@ -41,13 +41,16 @@ def LivePlot():
         x_values = data['Timestamp']
         y_values = data['Temperatures']
         plt.cla()
-        plt.plot(x_values, y_values)
+        
         if x_values[len(x_values)-1] > 60 and x_values[len(x_values)-1] < 3600 :
             plt.xlabel('Time(minutes)')
+            plt.plot(x_values/60, y_values)
         elif x_values[len(x_values)-1] > 3600 :
             plt.xlabel('Time(hours)')
+            plt.plot(x_values/3600, y_values)
         else:
             plt.xlabel('Time(seconds)')
+            plt.plot(x_values, y_values)
         plt.ylabel('Temperatures(Kelvin)')
         plt.title('LakeShore330 Temperature Controller')
         plt.gcf().autofmt_xdate()
