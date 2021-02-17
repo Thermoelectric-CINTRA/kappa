@@ -7,12 +7,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from multiprocessing import Process
+import os, os.path
 
 def RecordKelvin():
     temperatureController = LakeShore331("GPIB0::5")
     second = 0
     date = datetime.date.today()
-    fileName = "Data/temperature_{}.csv".format(date)
+    DIR = 'Data'
+    fileNum = len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))]) + 1
+    fileName = "Data/temperature_{}_{}.csv".format(date, fileNum)
     print(date)
     while True:
         temperature = temperatureController.temperature_A
@@ -36,7 +39,9 @@ def RecordKelvin():
 def LivePlot():
     def animate(self):
         date = datetime.date.today()
-        fileName = "temperature_{}.csv".format(date)
+        DIR = 'Data'
+        fileNum = len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))])
+        fileName = "temperature_{}_{}.csv".format(date, fileNum)
         data = pd.read_csv('Data/{}'.format(fileName))
         x_values = data['Timestamp']
         y_values = data['Temperatures']
