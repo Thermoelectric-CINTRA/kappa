@@ -13,16 +13,17 @@ keithley = Keithley2400("GPIB0::6")
 keithley.reset()
 keithley.measure_resistance()
 keithley.wires = 4
+keithley.resistance_nplc = 10
 keithley.enable_source()
 
-fileName = "Data/resistance.csv"
+fileName = "Data/resistance_rv.csv"
 
-Temp = 300
+Temp = 300.1
 count = 0
 datapoints = 10
 second = 0
 while count < datapoints:
-    time.sleep(1)
+    time.sleep(0.1)
     print(keithley.resistance)
     count += 1
 
