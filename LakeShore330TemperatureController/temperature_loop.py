@@ -24,13 +24,13 @@ def RecordKelvin():
         FirstPoint(temperatureController.temperature_A, firstpointcounter)
         firstpointcounter += 1
     
-    setpoint = 20
+    setpoint = 10
     temperatureController.setpoint = setpoint
-    temperatureController.heater_range = "high"
+    temperatureController.heater_range = "low"
     step = 50
     hold_time = 0
 
-    temperatureController.auto_tune = "PID"
+    # temperatureController.auto_tune = "PID"
     while True:
         temperature = temperatureController.temperature_A
 
@@ -62,7 +62,7 @@ def RecordKelvin():
                 # # elif setpoint >= 50 and setpoint <= 250:
                 # #     temperatureController.heater_range = "medium"
                 # else:
-                temperatureController.heater_range = "high"
+                # temperatureController.heater_range = "high"
                 print("Changing to new setting point: {}".format(setpoint))
                 
         else:
