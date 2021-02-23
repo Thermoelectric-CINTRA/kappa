@@ -47,7 +47,8 @@ def TempLoop():
         else:
             temperatureController.heater_range = "off"
 
-    setpoint = 474.9
+    setpoint = 250
+    endpoint = 350
     temperatureController.setpoint = setpoint
     PID(setpoint)
     step = 10
@@ -74,14 +75,22 @@ def TempLoop():
         if setpoint >= temperature - 0.1 and setpoint <= temperature + 0.1:
             hold_time += 1
             print("Hold time of {}K in second: {}".format(temperature, hold_time))
-            if hold_time >= 120:
-                ohmcounter = 0
-                while ohmcounter < 10:
-                    RecordOhm(temperatureController.temperature_A, ohmcounter)
-                    ohmcounter += 1
+            if hold_time >= 60:
+                ohmcounter_front = 0
+                while ohmcounter_front < 10:
+                    RecordOhm(temperatureController.temperature_A, ohmcounter_front, False)
+                    ohmcounter_front += 1
+                ohmcounter_rear = 0
+                while ohmcounter_rear < 10:
+                    RecordOhm(temperatureController.temperature_A, ohmcounter_rear, True)
+                    ohmcounter_rear += 1
                 time.sleep(1)
                 print("P: {}, I: {}, D: {}".format(temperatureController.gain, temperatureController.reset, temperatureController.rate))
                 setpoint += step
+                if setpoint > endpoint:
+                    temperatureController.heater_range = "off"
+                    print("Measurement Done.")
+                    break
                 temperatureController.setpoint = setpoint
                 PID(setpoint)
                 print("Changing to new setting point: {}".format(setpoint))
@@ -135,16 +144,20 @@ def LivePlot():
     plt.tight_layout()
     plt.show()
 
-def RecordOhm(temp, time):
+def RecordOhm(temp, time, is_Rear):
     print("Start record resistance.")
     keithley = Keithley2400("GPIB0::6")
     keithley.reset()
     keithley.measure_resistance()
     keithley.wires = 4
     keithley.resistance_nplc = 10
+    if is_Rear == True:
+        keithley.use_rear_terminals()
+        fileName = "Data/resistance_rear.csv"
+    else:
+        keithley.use_front_terminals()
+        fileName = "Data/resistance_front.csv"
     keithley.enable_source()
-
-    fileName = "Data/resistance_10K_to_475K.csv"
 
     Temp = temp
     second = time
